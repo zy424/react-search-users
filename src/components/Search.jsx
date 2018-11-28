@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import {connect} from 'react-redux'
 import {createMuiTheme, MuiThemeProvider, withStyles} from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -16,6 +17,8 @@ import AccountCircle from '@material-ui/icons/AccountBox'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import teal from "@material-ui/core/colors/teal"
 import pink from "@material-ui/core/colors/pink"
+
+import {setSearchName} from '../redux/actions/Actions'
 
 const theme = createMuiTheme({
   typography: {
@@ -115,12 +118,20 @@ class Search extends React.Component {
 
   handleMobileMenuClose = () => {
     this.setState({ mobileMoreAnchorEl: null })
-  };
+  }
+
+  search = (event) => {
+    //输入关键字
+    const searchName = event.target.value.trim()
+    if (searchName) {
+      //搜索
+      this.props.setSearchName(searchName)
+    }
+  }
 
   render() {
-    const { anchorEl, mobileMoreAnchorEl } = this.state
+    const { mobileMoreAnchorEl } = this.state
     const { classes } = this.props
-    const isMenuOpen = Boolean(anchorEl)
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
     const renderMobileMenu = (
@@ -162,6 +173,8 @@ class Search extends React.Component {
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
+                value={this.props.searchName}
+                onChange={this.search}
               />
             </div>
             <div className={classes.grow} />
@@ -189,6 +202,8 @@ class Search extends React.Component {
 
 Search.propTypes = {
   classes: PropTypes.object.isRequired,
+  setSearchName: PropTypes.func.isRequired,
+  searchName:PropTypes.string.isRequired,
 };
 
-export default withStyles(styles)(Search)
+export default connect(null, {setSearchName})(withStyles(styles)(Search))
